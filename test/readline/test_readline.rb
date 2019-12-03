@@ -433,7 +433,7 @@ module BasetestReadline
 
   def test_input_metachar
     skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
-    skip("Won't pass on mingw w/readline 7.0.005 [ruby-core:45682]") if mingw?
+    skip("Won't pass on mingw w/readline 7.0.005 [ruby-core:45682]") if /mingw/ =~ RUBY_PLATFORM
     bug6601 = '[ruby-core:45682]'
     Readline::HISTORY << "hello"
     wo = nil
@@ -672,7 +672,7 @@ module BasetestReadline
     Tempfile.create("test_readline_stdin") {|stdin|
       Tempfile.create("test_readline_stdout") {|stdout|
         yield stdin, stdout
-        if windows?
+        if /mswin|mingw/ =~ RUBY_PLATFORM
           # needed since readline holds refs to tempfiles, can't delete on Windows
           Readline.input = STDIN
           Readline.output = STDOUT
