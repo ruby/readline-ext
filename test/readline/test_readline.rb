@@ -732,4 +732,4 @@ class TestRelineAsReadline < Test::Unit::TestCase
     use_lib_reline
     super
   end
-end
+end if defined?(Reline)
