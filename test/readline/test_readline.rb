@@ -27,7 +27,7 @@ module BasetestReadline
   end
 
   def test_readline
-    skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
     with_temp_stdio do |stdin, stdout|
       stdin.write("hello\n")
       stdin.close
@@ -65,8 +65,8 @@ module BasetestReadline
   # line_buffer
   # point
   def test_line_buffer__point
-    skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
-    skip "GNU Readline has special behaviors" if defined?(Reline) and Readline == Reline
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "GNU Readline has special behaviors" if defined?(Reline) and Readline == Reline
     begin
       Readline.line_buffer
       Readline.point
@@ -154,7 +154,7 @@ module BasetestReadline
   end
 
   def test_completion_proc_empty_result
-    skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
     with_temp_stdio do |stdin, stdout|
       stdin.write("first\t")
       stdin.flush
@@ -233,7 +233,7 @@ module BasetestReadline
   end
 
   def test_completion_encoding
-    skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
     bug5941 = '[Bug #5941]'
     append_character = Readline.completion_append_character
     Readline.completion_append_character = ""
@@ -261,7 +261,7 @@ module BasetestReadline
     end or
     begin
       return if assert_under_utf8
-      skip("missing test for locale #{locale.name}")
+      omit("missing test for locale #{locale.name}")
     end
     expected = results[0][0...1]
     Readline.completion_case_fold = false
@@ -335,7 +335,7 @@ module BasetestReadline
   end
 
   def test_point
-    skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
     assert_equal(0, Readline.point)
     Readline.insert_text('12345')
     assert_equal(5, Readline.point)
@@ -350,7 +350,7 @@ module BasetestReadline
   end
 
   def test_insert_text
-    skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
     str = "test_insert_text"
     assert_equal(0, Readline.point)
     assert_equal(Readline, Readline.insert_text(str))
@@ -381,7 +381,7 @@ module BasetestReadline
   end
 
   def test_delete_text
-    skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
     str = "test_insert_text"
     assert_equal(0, Readline.point)
     assert_equal(Readline, Readline.insert_text(str))
@@ -401,7 +401,7 @@ module BasetestReadline
   end
 
   def test_modify_text_in_pre_input_hook
-    skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
     with_temp_stdio {|stdin, stdout|
       begin
         stdin.write("world\n")
@@ -432,8 +432,8 @@ module BasetestReadline
   end
 
   def test_input_metachar
-    skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
-    skip("Won't pass on mingw w/readline 7.0.005 [ruby-core:45682]") if /mingw/ =~ RUBY_PLATFORM
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit("Won't pass on mingw w/readline 7.0.005 [ruby-core:45682]") if /mingw/ =~ RUBY_PLATFORM
     bug6601 = '[ruby-core:45682]'
     Readline::HISTORY << "hello"
     wo = nil
@@ -450,10 +450,10 @@ module BasetestReadline
   end
 
   def test_input_metachar_multibyte
-    skip "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
     unless Encoding.find("locale") == Encoding::UTF_8
       return if assert_under_utf8
-      skip 'this test needs UTF-8 locale'
+      omit 'this test needs UTF-8 locale'
     end
     bug6602 = '[ruby-core:45683]'
     Readline::HISTORY << "\u3042\u3093"
@@ -480,8 +480,8 @@ module BasetestReadline
   end
 
   def test_refresh_line
-    skip "Only when refresh_line exists" unless Readline.respond_to?(:refresh_line)
-    skip unless respond_to?(:assert_ruby_status)
+    omit "Only when refresh_line exists" unless Readline.respond_to?(:refresh_line)
+    omit unless respond_to?(:assert_ruby_status)
     bug6232 = '[ruby-core:43957] [Bug #6232] refresh_line after set_screen_size'
     with_temp_stdio do |stdin, stdout|
       replace_stdio(stdin.path, stdout.path) do
@@ -544,7 +544,7 @@ module BasetestReadline
     return unless Readline.respond_to?(:quoting_detection_proc=)
     unless Encoding.find("locale") == Encoding::UTF_8
       return if assert_under_utf8
-      skip 'this test needs UTF-8 locale'
+      omit 'this test needs UTF-8 locale'
     end
 
     passed_text = nil
@@ -625,7 +625,7 @@ module BasetestReadline
     return unless Readline.respond_to?(:completion_quote_character)
     if /solaris/i =~ RUBY_PLATFORM
       # http://rubyci.s3.amazonaws.com/solaris11s-sunc/ruby-trunk/log/20181228T102505Z.fail.html.gz
-      skip 'This test does not succeed on Oracle Developer Studio for now'
+      omit 'This test does not succeed on Oracle Developer Studio for now'
     end
 
     Readline.completion_proc = -> (_) { [] }
@@ -709,7 +709,7 @@ module BasetestReadline
     return false if ENV['LC_ALL'] == 'UTF-8'
     loc = caller_locations(1, 1)[0].base_label.to_s
     assert_separately([{"LC_ALL"=>"UTF-8"}, "-r", __FILE__], <<SRC)
-#skip "test \#{ENV['LC_ALL']}"
+#omit "test \#{ENV['LC_ALL']}"
 #{self.class.name}.new(#{loc.dump}).run(Test::Unit::Runner.new)
 SRC
     return true
