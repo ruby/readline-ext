@@ -584,6 +584,7 @@ module BasetestReadline
   end
 
   def test_simple_completion
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
     line = nil
 
     open(IO::NULL, 'w') do |null|
