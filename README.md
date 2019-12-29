@@ -1,8 +1,15 @@
 # Readline
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/readline`. To experiment with that code, run `bin/console` for an interactive prompt.
+The Readline module provides interface for GNU Readline.
+This module defines a number of methods to facilitate completion
+and accesses input history from the Ruby interpreter.
+This module supported Edit Line(libedit) too.
+libedit is compatible with GNU Readline.
 
-TODO: Delete this and the text above, and describe your gem
+GNU Readline:: http://www.gnu.org/directory/readline.html
+libedit::      http://www.thrysoee.dk/editline/
+
+See RDoc for Readline module.
 
 ## Installation
 
@@ -22,7 +29,20 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require "readline"
+while buf = Readline.readline("> ", true)
+  p buf
+end
+```
+
+```ruby
+require "readline"
+while buf = Readline.readline("> ", true)
+  p Readline::HISTORY.to_a
+  print("-> ", buf, "\n")
+end
+```
 
 ## Development
 
@@ -32,4 +52,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/hsbt/readline.
+Bug reports and pull requests are welcome on GitHub at https://github.com/ruby/readline-ext.
