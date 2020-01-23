@@ -585,7 +585,6 @@ module BasetestReadline
 
   def test_simple_completion
     omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
-    omit if /mingw/ =~ RUBY_DESCRIPTION # TODO: skip continuous failure.
 
     line = nil
 
@@ -594,7 +593,9 @@ module BasetestReadline
         Readline.input = r
         Readline.output = null
         Readline.completion_proc = ->(text) do
-          ['abcde', 'abc12']
+          ['abcde', 'abc12'].map { |i|
+            i.encode(Encoding.default_external)
+          }
         end
         w.write("a\t\n")
         w.flush
