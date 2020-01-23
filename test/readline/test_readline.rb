@@ -517,7 +517,9 @@ module BasetestReadline
       replace_stdio(stdin.path, stdout.path) do
         Readline.completion_proc = ->(text) do
           passed_text = text
-          ['completion']
+          ['completion'].map { |i|
+            i.encode(Encoding.default_external)
+          }
         end
         Readline.completer_quote_characters = '\'"'
         Readline.completer_word_break_characters = ' '
@@ -555,7 +557,9 @@ module BasetestReadline
       replace_stdio(stdin.path, stdout.path) do
         Readline.completion_proc = ->(text) do
           passed_text = text
-          ['completion']
+          ['completion'].map { |i|
+            i.encode(Encoding.default_external)
+          }
         end
         Readline.completer_quote_characters = '\'"'
         Readline.completer_word_break_characters = ' '
@@ -588,6 +592,9 @@ module BasetestReadline
         Readline.output = null
         Readline.completion_proc = ->(text) do
           ['abcde', 'abc12']
+          ['abcde', 'abc12'].map { |i|
+            i.encode(Encoding.default_external)
+          }
         end
         w.write("a\t\n")
         w.flush
@@ -596,6 +603,35 @@ module BasetestReadline
     end
 
     assert_equal('abc', line)
+  end
+
+  def test_completion_with_completion_append_character
+    omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "Reline doesn't still implement it" if defined?(Reline) and Readline == Reline
+    line = nil
+
+    append_character = Readline.completion_append_character
+    open(IO::NULL, 'w') do |null|
+      IO.pipe do |r, w|
+        Readline.input = r
+        Readline.output = null
+        Readline.completion_append_character = '!'
+        Readline.completion_proc = ->(text) do
+          ['abcde'].map { |i|
+            i.encode(Encoding.default_external)
+          }
+        end
+        w.write("a\t\n")
+        w.flush
+        line = Readline.readline('> ', false)
+      end
+    end
+
+    assert_equal('abcde!', line)
+  ensure
+    return if /EditLine/n.match(Readline::VERSION)
+    return if defined?(Reline) and Readline == Reline
+    Readline.completion_append_character = append_character
   end
 
   def test_completion_quote_character_completing_unquoted_argument
