@@ -16,5 +16,5 @@ task :default => [:compile, :test]
 task :build => :make_gem_depend
 
 task :make_gem_depend do
-  FileUtils.copy_file("ext/readline/depend.gem", "ext/readline/depend")
+  FileUtils.copy_file("ext/readline/depend-gem", "ext/readline/depend")
 end
