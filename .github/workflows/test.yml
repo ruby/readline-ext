@@ -13,13 +13,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
-    - name: libedit
+    - name: Install libedit
       run: |
         case ${{matrix.os}} in
         ubunt*) sudo apt install libedit-dev libedit2;;
         macos*) brew install libedit;;
         esac
-      if: ${{matrix.libedit}} == 'enable'
+      if: matrix.libedit == 'enable'
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
