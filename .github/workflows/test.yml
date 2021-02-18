@@ -4,22 +4,20 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: build (${{ matrix.ruby }} / ${{ matrix.os }} / libedit-${{ matrix.libedit}})
+    name: build (${{ matrix.ruby }} / ${{ matrix.os }})
     strategy:
       matrix:
         ruby: [ '3.0', 2.7, 2.6, 2.5, head ]
         os: [ ubuntu-latest, macos-latest ]
-        libedit: [ disable, enable ]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
     - name: Install libedit
-      run: |
-        case ${{matrix.os}} in
-        ubunt*) sudo apt install libedit-dev libedit2;;
-        macos*) brew install libedit;;
-        esac
-      if: matrix.libedit == 'enable'
+      run: sudo apt-get install -q libedit-dev libedit2
+      if: startsWith(matrix.os, 'ubuntu')
+    - name: Install libedit
+      run: brew install libedit
+      if: startsWith(matrix.os, 'macos')
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -29,4 +27,8 @@ jobs:
         gem install bundler --no-document
         bundle install
     - name: Run test
-      run: rake compile test -- --${{matrix.libedit}}-libedit
+      run: rake compile test
+    - name: Run test with libedit enabled
+      run: rake clobber compile test -- --enable-libedit
+    - name: Run test with libedit disabled
+      run: rake clobber compile test -- --disable-libedit
