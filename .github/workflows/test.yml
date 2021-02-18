@@ -4,14 +4,22 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: build (${{ matrix.ruby }} / ${{ matrix.os }})
+    name: build (${{ matrix.ruby }} / ${{ matrix.os }} / libedit-${{ matrix.libedit}})
     strategy:
       matrix:
-        ruby: [ 3.0, 2.7, 2.6, 2.5, head ]
+        ruby: [ '3.0', 2.7, 2.6, 2.5, head ]
         os: [ ubuntu-latest, macos-latest ]
+        libedit: [ disable, enable ]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
+    - name: libedit
+      run: |
+        case ${{matrix.os}} in
+        ubunt*) sudo apt install libedit-dev libedit2;;
+        macos*) brew install libedit;;
+        esac
+      if: ${{matrix.libedit}} == 'enable'
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -21,4 +29,4 @@ jobs:
         gem install bundler --no-document
         bundle install
     - name: Run test
-      run: rake compile test
+      run: rake compile test -- --${{matrix.libedit}}-libedit
