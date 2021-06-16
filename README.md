@@ -6,8 +6,8 @@ and accesses input history from the Ruby interpreter.
 This module supported Edit Line(libedit) too.
 libedit is compatible with GNU Readline.
 
-GNU Readline:: http://www.gnu.org/directory/readline.html
-libedit::      http://www.thrysoee.dk/editline/
+- [GNU Readline](http://www.gnu.org/directory/readline.html)
+- [libedit](http://www.thrysoee.dk/editline/)
 
 See RDoc for Readline module.
 
