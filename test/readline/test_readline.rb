@@ -485,18 +485,17 @@ module BasetestReadline
     omit "Skip Readline 7.0" if Readline::VERSION == "7.0"
     omit unless respond_to?(:assert_ruby_status)
     omit if /mswin|mingw/ =~ RUBY_PLATFORM
+    if defined?(TestReadline) && self.class == TestReadline
+      use = "use_ext_readline"
+    elsif defined?(TestRelineAsReadline) && self.class == TestRelineAsReadline
+      use = "use_lib_reline"
+    end
     code = <<-"end;"
       $stdout.sync = true
       require 'readline'
       require 'helper'
       puts "Readline::VERSION is \#{Readline::VERSION}."
-      #{
-        if defined?(TestReadline) && self.class == TestReadline
-          "use_ext_readline"
-        elsif defined?(TestRelineAsReadline) && self.class == TestRelineAsReadline
-          "use_lib_reline"
-        end
-      }
+      #{use}
       Readline.input = STDIN
       # 0. Send SIGINT to this script.
       begin
