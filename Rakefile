@@ -5,7 +5,7 @@ require "fileutils"
 
 Rake::TestTask.new(:test) do |t|
   t.libs << "test"
-  t.libs << "lib" << "test/lib"
+  t.libs << "lib"
   t.test_files = FileList["test/**/test_*.rb"]
 end
 
@@ -20,7 +20,6 @@ task :make_gem_depend do
 end
 
 task :sync_tool do
-  FileUtils.cp "../ruby/tool/lib/core_assertions.rb", "./test/lib"
   FileUtils.cp "../ruby/tool/lib/envutil.rb", "./test/lib"
   FileUtils.cp "../ruby/tool/lib/find_executable.rb", "./test/lib"
 end
