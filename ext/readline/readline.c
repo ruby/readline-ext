@@ -46,6 +46,15 @@
 #include <sys/stat.h>
 #endif
 
+#ifndef HAVE_RB_IO_DESCRIPTOR
+int io_descriptor_fallback(VALUE io) {
+    rb_io_t *fptr;
+    GetOpenFile(io, fptr);
+    return fptr->fd;
+}
+#define rb_io_descriptor io_descriptor_fallback
+#endif
+
 static VALUE mReadline;
 
 #define EDIT_LINE_LIBRARY_VERSION "EditLine wrapper"
@@ -373,30 +382,36 @@ clear_rl_outstream(void)
     readline_outstream = Qfalse;
 }
 
+VALUE io_descriptor(VALUE io) {
+    return RB_INT2NUM(rb_io_descriptor(io));
+}
+
 static void
 prepare_readline(void)
 {
     static int initialized = 0;
+    int state;
+
     if (!initialized) {
         rl_initialize();
         initialized = 1;
     }
 
     if (readline_instream) {
-        rb_io_t *ifp;
-        rb_io_check_initialized(ifp = RFILE(rb_io_taint_check(readline_instream))->fptr);
-        if (ifp->fd < 0) {
+        rb_protect(io_descriptor, readline_instream, &state);
+
+        if (state) {
             clear_rl_instream();
-            rb_raise(rb_eIOError, "closed readline input");
+            rb_jump_tag(state);
         }
     }
 
     if (readline_outstream) {
-        rb_io_t *ofp;
-        rb_io_check_initialized(ofp = RFILE(rb_io_taint_check(readline_outstream))->fptr);
-        if (ofp->fd < 0) {
+        rb_protect(io_descriptor, readline_outstream, &state);
+
+        if (state) {
             clear_rl_outstream();
-            rb_raise(rb_eIOError, "closed readline output");
+            rb_jump_tag(state);
         }
     }
 }
@@ -553,7 +568,6 @@ readline_readline(int argc, VALUE *argv, VALUE self)
 static VALUE
 readline_s_set_input(VALUE self, VALUE input)
 {
-    rb_io_t *ifp;
     int fd;
     FILE *f;
 
@@ -562,9 +576,9 @@ readline_s_set_input(VALUE self, VALUE input)
     }
     else {
         Check_Type(input, T_FILE);
-        GetOpenFile(input, ifp);
+        fd = rb_io_descriptor(input);
         clear_rl_instream();
-        fd = rb_cloexec_dup(ifp->fd);
+        fd = rb_cloexec_dup(fd);
         if (fd == -1)
             rb_sys_fail("dup");
         f = fdopen(fd, "r");
@@ -589,7 +603,6 @@ readline_s_set_input(VALUE self, VALUE input)
 static VALUE
 readline_s_set_output(VALUE self, VALUE output)
 {
-    rb_io_t *ofp;
     int fd;
     FILE *f;
 
@@ -598,9 +611,9 @@ readline_s_set_output(VALUE self, VALUE output)
     }
     else {
         Check_Type(output, T_FILE);
-        GetOpenFile(output, ofp);
+        fd = rb_io_descriptor(output);
         clear_rl_outstream();
-        fd = rb_cloexec_dup(ofp->fd);
+        fd = rb_cloexec_dup(fd);
         if (fd == -1)
             rb_sys_fail("dup");
         f = fdopen(fd, "w");
