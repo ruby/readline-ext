@@ -1,6 +1,8 @@
 # frozen_string_literal: false
 require "mkmf"
 
+have_func("rb_io_descriptor")
+
 readline = Struct.new(:headers, :extra_check).new(["stdio.h"])
 
 def readline.have_header(header)
