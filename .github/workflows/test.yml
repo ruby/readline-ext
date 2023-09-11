@@ -18,7 +18,7 @@ jobs:
         os: [ ubuntu-latest, macos-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install libedit
       run: sudo apt-get install -q libedit-dev libedit2
       if: startsWith(matrix.os, 'ubuntu')
