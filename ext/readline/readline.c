@@ -15,7 +15,7 @@
 
 ************************************************/
 
-#define READLINE_VERSION "0.1.5"
+#define READLINE_VERSION "0.2.0"
 
 #ifdef RUBY_EXTCONF_H
 #include RUBY_EXTCONF_H
