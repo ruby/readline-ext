@@ -39,6 +39,7 @@ module BasetestReadline
   def test_readline
     Readline::HISTORY.clear
     omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit if RUBY_VERSION < '3.0'
     with_temp_stdio do |stdin, stdout|
       stdin.write("hello\n")
       stdin.close
@@ -47,29 +48,10 @@ module BasetestReadline
         Readline.readline("> ", true)
       }
       assert_equal("hello", line)
-      assert_equal(true, line.tainted?) if RUBY_VERSION < '2.7'
       stdout.rewind
       assert_equal("> ", stdout.read(2))
       assert_equal(1, Readline::HISTORY.length)
       assert_equal("hello", Readline::HISTORY[0])
-
-      # Work around lack of SecurityError in Reline
-      # test mode with tainted prompt.
-      # Also skip test on Ruby 2.7+, where $SAFE/taint is deprecated.
-      if RUBY_VERSION < '2.7' && defined?(TestRelineAsReadline) && !kind_of?(TestRelineAsReadline)
-        begin
-          Thread.start {
-            $SAFE = 1
-            assert_raise(SecurityError) do
-              replace_stdio(stdin.path, stdout.path) do
-                Readline.readline("> ".taint)
-              end
-            end
-          }.join
-        ensure
-          $SAFE = 0
-        end
-      end
     end
   end
 
