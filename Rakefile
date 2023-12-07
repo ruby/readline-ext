@@ -18,8 +18,3 @@ task :build => :make_gem_depend
 task :make_gem_depend do
   FileUtils.copy_file("ext/readline/depend-gem", "ext/readline/depend")
 end
-
-task :sync_tool do
-  FileUtils.cp "../ruby/tool/lib/envutil.rb", "./test/lib"
-  FileUtils.cp "../ruby/tool/lib/find_executable.rb", "./test/lib"
-end

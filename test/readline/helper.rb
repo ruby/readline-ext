@@ -1,6 +1,5 @@
 begin
-  # for standalone test suite on ruby/logger
-  require_relative '../lib/envutil'
+  require 'envutil'
 rescue LoadError
 end
 
