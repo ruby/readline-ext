@@ -481,6 +481,9 @@ module BasetestReadline
     # likewise with 32-bit userspace on 64-bit kernel
     omit if /\Ax86_64-linux-(?:x32|i[3-6]686)\z/ =~ RUBY_PLATFORM
 
+    # Skip arm32-linux (Travis CI).  See aefc988 in main ruby repo.
+    omit "Skip arm32-linux" if /armv[0-9+][a-z]-linux/ =~ RUBY_PLATFORM
+
     if defined?(TestReadline) && self.class == TestReadline
       use = "use_ext_readline"
     elsif defined?(TestRelineAsReadline) && self.class == TestRelineAsReadline
