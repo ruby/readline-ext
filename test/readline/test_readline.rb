@@ -230,6 +230,7 @@ module BasetestReadline
 
   def test_completion_encoding
     omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "Skip Reline" if defined?(Reline) and Readline == Reline
     bug5941 = '[Bug #5941]'
     append_character = Readline.completion_append_character
     Readline.completion_append_character = ""
