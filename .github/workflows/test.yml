@@ -6,13 +6,14 @@ jobs:
   ruby-versions:
     uses: ruby/actions/.github/workflows/ruby_versions.yml@master
     with:
-      min_version: 3.1
+      min_version: 2.6
       engine: cruby
 
   test:
     needs: ruby-versions
     name: build (${{ matrix.ruby }} / ${{ matrix.os }})
     strategy:
+      fail-fast: false
       matrix:
         ruby: ${{ fromJson(needs.ruby-versions.outputs.versions) }}
         os: [ ubuntu-latest, macos-latest ]
