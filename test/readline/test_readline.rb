@@ -486,8 +486,6 @@ module BasetestReadline
 
     if defined?(TestReadline) && self.class == TestReadline
       use = "use_ext_readline"
-    elsif defined?(TestRelineAsReadline) && self.class == TestRelineAsReadline
-      use = "use_lib_reline"
     end
     code = <<-"end;"
       $stdout.sync = true
@@ -825,8 +823,6 @@ module BasetestReadline
     loader = nil
     if defined?(TestReadline) && self.class == TestReadline
       loader = "use_ext_readline"
-    elsif defined?(TestRelineAsReadline) && self.class == TestRelineAsReadline
-      loader = "use_lib_reline"
     end
     if loader
       res, exit_status = Open3.capture2e("#{RUBY} -I#{__dir__} -Ilib -rhelper -e '#{loader}; Readline.readline(%{y or n?})'", stdin_data: "y\n")
@@ -915,26 +911,4 @@ class TestReadline < Test::Unit::TestCase
     use_ext_readline
     super
   end
-end if defined?(ReadlineSo) && ENV["TEST_READLINE_OR_RELINE"] != "Reline"
-
-class TestRelineAsReadline < Test::Unit::TestCase
-  include BasetestReadline
-
-  def setup
-    use_lib_reline
-    super
-  end
-
-  def teardown
-    finish_using_lib_reline
-    super
-  end
-
-  def get_default_internal_encoding
-    if RUBY_PLATFORM =~ /mswin|mingw/
-      Encoding.default_internal || Encoding::UTF_8
-    else
-      Reline::IOGate.encoding
-    end
-  end
-end if defined?(Reline) && ENV["TEST_READLINE_OR_RELINE"] != "Readline"
+end if defined?(ReadlineSo)

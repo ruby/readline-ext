@@ -259,8 +259,7 @@ class TestReadlineHistory < Test::Unit::TestCase
     use_ext_readline
     super
   end
-end if defined?(::ReadlineSo) && defined?(::ReadlineSo::HISTORY) &&
-  ENV["TEST_READLINE_OR_RELINE"] != "Reline" &&
+end if defined?(::ReadlineSo) && defined?(::ReadlineSo::HISTORY)
   (
    begin
      ReadlineSo::HISTORY.clear
@@ -268,25 +267,3 @@ end if defined?(::ReadlineSo) && defined?(::ReadlineSo::HISTORY) &&
      false
    end
    )
-
-class TestRelineAsReadlineHistory < Test::Unit::TestCase
-  include BasetestReadlineHistory
-
-  def setup
-    use_lib_reline
-    super
-  end
-
-  def teardown
-    finish_using_lib_reline
-    super
-  end
-
-  def get_default_internal_encoding
-    if RUBY_PLATFORM =~ /mswin|mingw/
-      Encoding.default_internal || Encoding::UTF_8
-    else
-      Reline::IOGate.encoding
-    end
-  end
-end if defined?(Reline) && ENV["TEST_READLINE_OR_RELINE"] != "Readline"

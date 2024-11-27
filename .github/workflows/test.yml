@@ -32,7 +32,6 @@ jobs:
     - name: Install dependencies
       run: |
         bundle install
-        gem install reline --pre
     - name: Run test
       run: rake compile test
     - name: Run test with libedit enabled
