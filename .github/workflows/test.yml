@@ -20,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install libedit
-      run: sudo apt-get install -q libedit-dev libedit2
+      run: sudo apt-get install -q libedit-dev libreadline-dev
       if: startsWith(matrix.os, 'ubuntu')
     - name: Install libedit
       run: brew install libedit
