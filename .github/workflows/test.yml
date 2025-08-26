@@ -16,11 +16,12 @@ jobs:
       matrix:
         ruby: ${{ fromJson(needs.ruby-versions.outputs.versions) }}
         os: [ ubuntu-latest, macos-latest ]
+        target: [ libedit, libreadline ]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
     - name: Install libedit
-      run: sudo apt-get install -q libedit-dev libedit2
+      run: sudo apt-get install -q ${{ matrix.target }}-dev
       if: startsWith(matrix.os, 'ubuntu')
     - name: Install libedit
       run: brew install libedit
@@ -37,5 +38,7 @@ jobs:
       run: rake compile test
     - name: Run test with libedit enabled
       run: rake clobber compile test -- --enable-libedit
+      if: matrix.target == 'libedit'
     - name: Run test with libedit disabled
       run: rake clobber compile test -- --disable-libedit
+      if: matrix.target == 'libreadline'
