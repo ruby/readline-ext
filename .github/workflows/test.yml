@@ -8,11 +8,13 @@ jobs:
     with:
       min_version: 2.6
       engine: cruby
+      versions: '["truffleruby-head"]'
 
   test:
     needs: ruby-versions
-    name: build (${{ matrix.ruby }} / ${{ matrix.os }})
+    name: build (${{ matrix.ruby }} / ${{ matrix.os }} / ${{ matrix.target }})
     strategy:
+      fail-fast: false
       matrix:
         ruby: ${{ fromJson(needs.ruby-versions.outputs.versions) }}
         os: [ ubuntu-latest, macos-latest ]

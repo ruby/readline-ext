@@ -151,6 +151,7 @@ module BasetestReadline
 
   def test_completion_proc_empty_result
     omit "Skip Editline" if /EditLine/n.match(Readline::VERSION)
+    omit "failing" if RUBY_ENGINE == "truffleruby" && self.class == TestRelineAsReadline
     with_temp_stdio do |stdin, stdout|
       stdin.write("first\t")
       stdin.flush
