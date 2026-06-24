@@ -21,7 +21,7 @@ jobs:
         target: [ libedit, libreadline ]
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Install libedit
       run: sudo apt-get install -q ${{ matrix.target }}-dev
       if: startsWith(matrix.os, 'ubuntu')
